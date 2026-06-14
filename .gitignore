@@ -1,0 +1,31 @@
+# --- .NET / spike build output ---
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# --- Node / diagrams-as-code tooling ---
+node_modules/
+
+# --- OS / editor noise ---
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Local-only scratch & private companions ---
+# *.local.md = personal gaps / notes (e.g. CLAUDE.local.md), not for public eyes.
+# NOTE: .gitignore has no inline comments — the # must start the line, or it becomes part of the pattern.
+*.local.md
+scratch/
+_private/
+
+# --- Private / sensitive study artifacts (kept local, not pushed) ---
+# Drill SCORED RECORDS deliberately surface weak spots — not for a public repo.
+# Keep the public protocol/rubric/tooling (_drills/README.md, template.md, tooling.md);
+# ignore only the numbered records (_drills/0001-*.md etc.).
+_drills/[0-9]*.md
+
+# Keep empty structural dirs (spike/, _sources/) via their .gitkeep files.
+# Study artifacts — decision cards, ADRs, READMEs, journal — ARE tracked.
+# (Drill scored records are the deliberate exception above.)
