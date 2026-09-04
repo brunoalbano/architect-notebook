@@ -238,6 +238,30 @@ reviews. Each is a focused decision card with a comparison table at its heart. P
   vs provisioning (they solve *different* problems). OAuth2 grant types (auth-code+PKCE, client-creds,
   device), OIDC on top of OAuth2, SAML for enterprise SSO, **SCIM** for user provisioning/deprovisioning.
   When each, and how they combine in a real enterprise SSO + lifecycle setup. (relates to topic 51)
+  - **OAuth2 vs SAML head-to-head** (the recurring "which one" question in enterprise SSO design):
+    - **Problem solved:** OAuth2 is an **authorization** framework (delegated access to an API/resource
+      on a user's behalf, via tokens/scopes) — authentication is *not* its job (that's OIDC's layer on
+      top). SAML is an **authentication + federation** protocol built specifically for browser-based SSO
+      between an IdP and SP, bundling identity assertions with attributes in one XML payload.
+    - **Format & transport:** OAuth2/OIDC → JSON + JWT/opaque tokens over HTTP redirects, REST-friendly,
+      lightweight. SAML → XML assertions, signed/encrypted, POST-binding via browser form-post, heavier
+      parsing/validation surface (historically a rich source of XML-signature-wrapping vulnerabilities).
+    - **Where each wins:** OAuth2/OIDC — modern web/mobile/SPA apps, API access delegation, native/mobile
+      apps (PKCE), machine-to-machine (client-credentials). SAML — legacy enterprise SSO where the IdP is
+      already SAML-only (many large corporate IdPs), compliance environments with entrenched SAML
+      deployments, B2B federation with partners who only speak SAML.
+    - **Benefits of OAuth2/OIDC:** simpler to implement correctly, native mobile/SPA support (SAML's
+      browser-redirect model fits poorly on mobile), smaller token payload, easy delegated *API* access
+      (not just login), active ecosystem (most new IdPs — Auth0, Okta, Entra ID — are OIDC-first).
+    - **Benefits of SAML:** mature enterprise tooling/IT-admin familiarity, richer attribute-assertion
+      model out of the box (roles/groups/attributes in the assertion itself), still the *lingua franca*
+      for large enterprise SSO integrations (banks, gov, big corporate IT).
+    - **Failure modes to know cold:** OAuth2 token replay/leakage if not scoped+short-lived, confused-
+      deputy problems when scopes are too broad, "OAuth2 used as authentication" anti-pattern (why OIDC
+      exists); SAML XML-signature-wrapping attacks, assertion replay without tight `NotOnOrAfter`/audience
+      checks, and the sheer complexity of correctly validating signed XML.
+    - Real integration: **Auth0/Entra ID as IdP speaking both** — OIDC for your own apps, SAML bridge for
+      an enterprise customer's existing IdP. *(relates to 51, 58 multi-tenant identity)*
 - [ ] **81 · "What's my queue?" — SQS vs SNS vs Kafka vs RabbitMQ vs Azure Service Bus vs Postgres
   `SKIP LOCKED`** — log vs queue vs pub/sub vs "just use the DB". Ordering, delivery guarantees, replay,
   throughput, retention, ops cost. The key insight: most teams reach for Kafka when a transactional
