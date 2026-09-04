@@ -192,9 +192,42 @@ Legend per topic: `[ ] Read · Model · Build · Decide · Write` (tick when don
   decisions, leading without authority, the architect-as-mentor. · FoSA ch.21–24
 - [ ] **65 · Cloud-native & platform topics** — IaC at architecture scale (you have Terraform/Spacelift),
   well-architected reviews, landing zones. *(multi-tenancy now lives in topic 58)*
+- [ ] **66 · Multi-cloud & hybrid architecture strategy** — the "why" and "how" *before* the network plumbing
+  in topic 96: single-cloud-by-default vs multi-cloud-by-design (avoid lock-in, best-of-breed, regulatory/
+  M&A-driven) vs hybrid (cloud + on-prem/private DC for latency, legacy, sovereignty, or cost reasons).
+  Decision drivers: portability cost (abstraction layers eat the differentiated features you pay for),
+  data-gravity & egress cost as the real multi-cloud tax, identity federation across clouds, and
+  observability/ops fragmentation (N monitoring stacks). Patterns: active-active vs active-passive
+  across providers, workload placement (what *must* stay on-prem — data residency, latency to legacy
+  systems — vs what's cloud-native), Kubernetes as the common substrate (portable compute, not portable
+  data), and abstraction tradeoffs (Terraform/Crossplane multi-provider IaC vs cloud-native services
+  directly). **Failure modes:** the "lowest common denominator" trap (multi-cloud without a real driver
+  just multiplies ops cost), split identity/observability, egress bills that dwarf compute savings,
+  and hybrid connectivity as a new single point of failure (ExpressRoute/Direct Connect/VPN). Concrete:
+  Azure Arc / AWS Outposts for hybrid; one-line note on GCP Anthos. *(relates to 55 cost, 65 IaC, 96
+  networking; builds the strategy layer that 96's VNet/VPC mechanics implement)*
 
 ## Tier 7 — Frontier / context-dependent  *(pick if relevant to real work)*
-- [ ] **70 · Data-intensive & streaming** — Kafka deep dive, stream processing, CDC, lakehouse basics.
+- [ ] **70 · Data pipelines, lakehouse & streaming architecture** — the full data-platform stack behind
+  "Data & AI teams" in a modern org, not just Kafka mechanics. Covers:
+  - **Batch vs streaming vs micro-batch** ingestion, and the **Lambda vs Kappa architecture** debate
+    (why most teams converge on Kappa/streaming-first today).
+  - **Medallion architecture** (bronze/silver/gold) and the **data lake → lakehouse** evolution — why
+    lakehouse (Delta Lake / Apache Iceberg / Hudi table formats: ACID + schema evolution on object
+    storage) replaced the lake-vs-warehouse either/or. Lakehouse vs traditional data warehouse
+    (Synapse/Redshift/Snowflake) vs pure lake — when each still wins.
+  - **CDC (Change Data Capture)** as the bridge from OLTP into the pipeline (ties to outbox pattern, 34).
+  - **Orchestration**: Azure Data Factory / Databricks Workflows / Airflow — DAG-based batch orchestration
+    vs event-driven triggering.
+  - **Data contracts & schema governance** — producer/consumer contracts on pipeline data, schema
+    registry (ties to 37, 82), and *why* this is where most "AI-ready data" initiatives actually fail
+    (garbage upstream, no contract enforcement).
+  - **Data mesh (awareness)** — domain-oriented data ownership, data-as-a-product, federated governance;
+    when it's the right org-scale answer vs when centralized lakehouse is simpler.
+  - **Failure modes:** schema drift breaking downstream consumers silently, small-file problems on object
+    storage, unbounded reprocessing cost, stale/duplicate data from CDC gaps, and pipelines becoming
+    unowned "spaghetti ETL" without contracts. Concrete: **Azure Databricks + ADLS Gen2 + Synapse**; one-line
+    AWS equivalent (Glue/EMR + S3 + Redshift). *(relates to 20, 22, 34, 37, 52 governance, 108 MLOps boundary)*
 - [ ] **71 · AI/LLM in architecture** — *expanded into its own **Tier 10** below.*
 - [ ] **72 · Edge, IoT, real-time** — if/when a project demands it.
 
